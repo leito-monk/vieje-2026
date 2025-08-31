@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vacaciones Familiares 2026 - Argentina, Uruguay, Brasil</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+    
+    <!-- Leaflet Routing Machine CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.2em;
+            font-weight: 300;
+        }
+        .subtitle {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        .map-container {
+            height: 600px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #ddd;
+            border-radius: 10px;
+        }
+        
+        #realMap {
+            height: 100%;
+            width: 100%;
+            border-radius: 7px;
+        }
+        
+        /* Estilos para los marcadores de Leaflet */
+        .custom-marker {
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .popup-content {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            max-width: 250px;
+        }
+        
+        .popup-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0 0 8px 0;
+        }
+        
+        .popup-country {
+            color: #3498db;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+        }
+        
+        .google-maps-button {
+            background: linear-gradient(135deg, #4285f4, #34a853);
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px auto;
+            max-width: 300px;
+            text-decoration: none;
+        }
+        
+        .google-maps-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);
+            background: linear-gradient(135deg, #3367d6, #2e7d32);
+        }
+        
+        .google-maps-button:active {
+            transform: translateY(0);
+        }
+        
+        .button-container {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        /* Decoraciones del mapa */
+        .ocean {
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 25%;
+            height: 100%;
+            background: linear-gradient(270deg, rgba(65,105,225,0.9) 0%, rgba(135,206,235,0.6) 100%);
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .river {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(135,206,235,0.7), rgba(173,216,230,0.5));
+            border-radius: 50px;
+            opacity: 0.6;
+        }
+        
+        .mountains {
+            position: absolute;
+            background: linear-gradient(180deg, rgba(139,69,19,0.3), rgba(160,82,45,0.2));
+            border-radius: 20px;
+            opacity: 0.4;
+        }
+        
+        .country-label {
+            position: absolute;
+            font-weight: bold;
+            color: rgba(0,0,0,0.3);
+            font-size: 24px;
+            pointer-events: none;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.7);
+        }
+        
+        .city-marker {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 4px solid white;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+            font-size: 18px;
+            z-index: 10;
+            transform: translate(-50%, -50%);
+        }
+        
+        .city-marker.major {
+            width: 60px;
+            height: 60px;
+            font-size: 20px;
+            border-width: 5px;
+            animation: pulse-major 3s infinite;
+        }
+        
+        @keyframes pulse-major {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+        
+        .city-marker:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+            z-index: 1000;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+        
+        .city-label {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            white-space: nowrap;
+            transform: translate(-50%, -130%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        .city-marker:hover .city-label {
+            opacity: 1;
+            transform: translate(-50%, -140%);
+        }
+        
+        .route-line {
+            position: absolute;
+            background: linear-gradient(90deg, #2c3e50, #34495e);
+            height: 6px;
+            border-radius: 3px;
+            transform-origin: left center;
+            opacity: 0.8;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .route-arrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 12px solid #2c3e50;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+        }
+        
+        .return-line {
+            background: linear-gradient(90deg, #e74c3c, #c0392b) !important;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        
+        .city-info-panel {
+            margin: 20px;
+            padding: 25px;
+            background: linear-gradient(135deg, #ecf0f1, #bdc3c7);
+            border-radius: 15px;
+            min-height: 100px;
+            transition: all 0.3s ease;
+            border: 2px solid #ddd;
+        }
+        
+        .day-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 18px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 5px solid #3498db;
+        }
+        
+        .day-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        .day-number {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(52,152,219,0.3);
+        }
+        
+        .day-content {
+            flex: 1;
+        }
+        
+        .city-name {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+        
+        .duration {
+            color: #7f8c8d;
+            font-size: 1em;
+            line-height: 1.4;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #ecf0f1;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #3498db;
+            display: block;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+        
+        .itinerary {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .itinerary h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 2em;
+            text-align: center;
+        }
+        
+        .map-legend {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            background: rgba(255,255,255,0.95);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-size: 12px;
+            max-width: 200px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 8px;
+            border: 2px solid white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌎 Vacaciones Familiares 2026</h1>
+            <p class="subtitle">Buenos Aires → Rivera → Porto Alegre → Imbituba → Cambará do Sul → Pelotas → La Paloma → Buenos Aires</p>
+        </div>
+        
+        <div class="map-container" id="map">
+            <!-- Mapa real con Leaflet -->
+            <div id="realMap"></div>
+        </div>
+        
+        <!-- Botón para abrir en Google Maps -->
+        <div class="button-container">
+            <h3 style="margin: 0 0 15px 0; color: #2c3e50;">🚗 Navegación</h3>
+            <button class="google-maps-button" onclick="openInGoogleMaps()">
+                <span style="font-size: 20px;">🗺️</span>
+                <span>Abrir Ruta Completa en Google Maps</span>
+                <span style="font-size: 14px;">📱</span>
+            </button>
+            
+            <!-- Botones adicionales para diferentes opciones -->
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap;">
+                <button onclick="openSegmentedRoute()" style="
+                    background: #17a2b8; 
+                    color: white; 
+                    border: none; 
+                    padding: 10px 15px; 
+                    border-radius: 25px; 
+                    cursor: pointer; 
+                    font-size: 14px;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.background='#138496'" onmouseout="this.style.background='#17a2b8'">
+                    🗂️ Ruta por Segmentos
+                </button>
+                
+                <button onclick="copyRouteCoordinates()" style="
+                    background: #6c757d; 
+                    color: white; 
+                    border: none; 
+                    padding: 10px 15px; 
+                    border-radius: 25px; 
+                    cursor: pointer; 
+                    font-size: 14px;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.background='#545b62'" onmouseout="this.style.background='#6c757d'">
+                    📋 Copiar Coordenadas
+                </button>
+            </div>
+            
+            <p style="margin: 15px 0 0 0; color: #666; font-size: 14px;">
+                💡 <strong>Tip:</strong> En móvil, el botón principal abrirá la app de Google Maps automáticamente
+            </p>
+        </div>
+        
+        <!-- Panel de información -->
+        <div id="cityInfo" class="city-info-panel">
+            <h3 style="margin: 0 0 15px 0; color: #2c3e50;">👆 Haz clic en cualquier número del mapa para ver detalles</h3>
+            <p style="margin: 0; color: #7f8c8d; font-size: 1.1em;">Explora cada parada de tu viaje de 22 días por Argentina, Uruguay y Brasil</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <span class="stat-number">22</span>
+                <div class="stat-label">Días Totales</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">7</span>
+                <div class="stat-label">Ciudades</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">3</span>
+                <div class="stat-label">Países</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">~3100</span>
+                <div class="stat-label">Kilómetros</div>
+            </div>
+        </div>
+        
+        <div class="itinerary">
+            <h2>📅 Itinerario Detallado - 22 Días</h2>
+            
+            <div class="day-item">
+                <div class="day-number">1</div>
+                <div class="day-content">
+                    <div class="city-name">Buenos Aires → Rivera 🇦🇷➡️🇺🇾</div>
+                    <div class="duration">Salida desde Buenos Aires. Viaje por Ruta 14 y Ruta 5 (4-5 horas). Cruce fronterizo Artigas-Quaraí.</div>
+                </div>
+            </div>
+            
+            <div class="day-item">
+                <div class="day-number">2</div>
+                <div class="day-content">
+                    <div class="city-name">Rivera → Porto Alegre 🇺🇾➡️🇧🇷</div>
+                    <div class="duration">Viaje por BR-153 y BR-290 (6-7 horas). Llegada a la capital gaucha.</div>
+                </div>
+            </div>
+            
+            <div class="day-item">
+                <div class="day-number">3</div>
+                <div class="day-content">
+                    <div class="city-name">Porto Alegre → Imbituba 🇧🇷</div>
+                    <div class="duration">Viaje por BR-101 hacia la costa catarinense (4-5 horas).</div>
+                </div>
+            </div>
+            
+            <div class="day-item" style="border-left-color: #27ae60;">
+                <div class="day-number" style="background: linear-gradient(135deg, #27ae60, #229954);">4-13</div>
+                <div class="day-content">
+                    <div class="city-name">🏖️ Imbituba - 10 días 🇧🇷</div>
+                    <div class="duration">Explorar costa catarinense: Praia do Rosa, Praia da Vila, avistamiento de ballenas (temporada), surf, gastronomía marina, Villa de Pescadores.</div>
+                </div>
+            </div>
+            
+            <div class="day-item">
+                <div class="day-number">14</div>
+                <div class="day-content">
+                    <div class="city-name">Imbituba → Cambará do Sul 🇧🇷</div>
+                    <div class="duration">Viaje interior por RS-020 hacia los cañones (3-4 horas).</div>
+                </div>
+            </div>
+            
+            <div class="day-item" style="border-left-color: #8e44ad;">
+                <div class="day-number" style="background: linear-gradient(135deg, #8e44ad, #7d3c98);">15-17</div>
+                <div class="day-content">
+                    <div class="city-name">🏔️ Cambará do Sul - 3 días 🇧🇷</div>
+                    <div class="duration">Parques Nacionales Aparados da Serra y Serra Geral. Cañón Itaimbezinho, Cañón Fortaleza, Trilha Rio do Boi, cascadas.</div>
+                </div>
+            </div>
+            
+            <div class="day-item">
+                <div class="day-number">18</div>
+                <div class="day-content">
+                    <div class="city-name">Cambará do Sul → Pelotas 🇧🇷</div>
+                    <div class="duration">Viaje corto por BR-116 (2 horas). Noche en ciudad histórica.</div>
+                </div>
+            </div>
+            
+            <div class="day-item">
+                <div class="day-number">19</div>
+                <div class="day-content">
+                    <div class="city-name">Pelotas → La Paloma 🇧🇷➡️🇺🇾</div>
+                    <div class="duration">Viaje por BR-116 y Ruta 15 uruguaya (4-5 horas). Cruce fronterizo Jaguarão-Río Branco.</div>
+                </div>
+            </div>
+            
+            <div class="day-item" style="border-left-color: #16a085;">
+                <div class="day-number" style="background: linear-gradient(135deg, #16a085, #148f77);">20-22</div>
+                <div class="day-content">
+                    <div class="city-name">🌊 La Paloma - 3 días 🇺🇾</div>
+                    <div class="duration">Balneario atlántico: Playa La Balconada, Cabo Polonio (excursión), puestas de sol, gastronomía costera, ambiente bohemio.</div>
+                </div>
+            </div>
+            
+            <div class="day-item">
+                <div class="day-number" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">23</div>
+                <div class="day-content">
+                    <div class="city-name">La Paloma → Buenos Aires 🇺🇾➡️🇦🇷</div>
+                    <div class="duration">Regreso final por Ruta 9 y Ruta 1 (5-6 horas). ¡Fin del viaje!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+    
+    <!-- Leaflet Routing Machine -->
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+    <script>
+        // Información completa de ciudades con coordenadas reales
+        const cities = [
+            {
+                name: "Buenos Aires",
+                days: "Salida/Llegada",
+                country: "🇦🇷 Argentina",
+                description: "Capital cosmopolita con 3 millones de habitantes. Famosa por el tango, la arquitectura europea, los barrios de San Telmo y La Boca, y la gastronomía mundial. Punto estratégico para iniciar tu aventura sudamericana.",
+                highlights: "🎭 Tango • 🥩 Asado • 🏛️ Arquitectura • 🛍️ Shopping",
+                color: "#e74c3c",
+                coordinates: [-58.3816, -34.6037]
+            },
+            {
+                name: "Rivera",
+                days: "1 día",
+                country: "🇺🇾 Uruguay",
+                description: "Ciudad fronteriza única que se conecta directamente con Santana do Livramento (Brasil). Es una sola ciudad dividida por la frontera, permitiendo caminar libremente entre dos países.",
+                highlights: "🛂 Frontera libre • 🛍️ Free shops • 🏛️ Centro histórico",
+                color: "#3498db",
+                coordinates: [-55.5511, -30.9054]
+            },
+            {
+                name: "Porto Alegre",
+                days: "Paso",
+                country: "🇧🇷 Brasil",
+                description: "Capital gaucha con 1.5 millones de habitantes. Centro cultural y gastronómico importante, famosa por sus churrasquerías, centros comerciales y vida nocturna. Puerta de entrada al interior de Rio Grande do Sul.",
+                highlights: "🍖 Churrasco • 🏢 Centros comerciales • 🎨 Cultura gaucha",
+                color: "#f39c12",
+                coordinates: [-51.2287, -30.0346]
+            },
+            {
+                name: "Imbituba",
+                days: "10 días",
+                country: "🇧🇷 Brasil",
+                description: "Paraíso costero en Santa Catarina con las mejores playas del sur de Brasil. Praia do Rosa es mundialmente famosa, Vila de Pescadores ofrece gastronomía marina auténtica. Temporada de ballenas: julio-noviembre.",
+                highlights: "🏄‍♂️ Surf clase mundial • 🐋 Avistamiento ballenas • 🏖️ Praia do Rosa • 🐟 Villa Pescadores",
+                color: "#27ae60",
+                coordinates: [-48.6701, -28.2401]
+            },
+            {
+                name: "Cambará do Sul",
+                days: "3 días",
+                country: "🇧🇷 Brasil",
+                description: "Puerta de entrada a los cañones más espectaculares de Brasil. Hogar de los Parques Nacionales Aparados da Serra y Serra Geral, con cañones de hasta 900m de profundidad y vistas del Atlántico.",
+                highlights: "🏔️ Cañón Itaimbezinho • 🌊 Cañón Fortaleza • 🥾 Trilhas extremas • 📸 Miradores épicos",
+                color: "#8e44ad",
+                coordinates: [-50.1020, -29.0430]
+            },
+            {
+                name: "Pelotas",
+                days: "1 noche",
+                country: "🇧🇷 Brasil",
+                description: "Ciudad histórica fundada en 1812, famosa por sus dulces tradicionales y arquitectura colonial. Centro cultural importante del sur de Brasil con museos, teatro y gastronomía tradicional gaucha.",
+                highlights: "🍰 Dulces tradicionales • 🏛️ Arquitectura colonial • 🎭 Teatro • 📚 Museos",
+                color: "#e67e22",
+                coordinates: [-52.3426, -31.7654]
+            },
+            {
+                name: "La Paloma",
+                days: "3 días",
+                country: "🇺🇾 Uruguay",
+                description: "Balneario bohemio del atlántico uruguayo con ambiente relajado. Famoso por sus puestas de sol, Cabo Polonio cercano, gastronomía pesquera y ambiente artístico. Ideal para relajación después del viaje.",
+                highlights: "🌅 Puestas de sol • 🦭 Cabo Polonio • 🎨 Ambiente bohemio • 🐟 Mariscos frescos",
+                color: "#16a085",
+                coordinates: [-54.1648, -34.6584]
+            }
+        ];
+
+        // Variables globales
+        let map;
+        let markers = [];
+        let routingControl;
+
+        // Inicializar mapa
+        function initRealMap() {
+            // Crear el mapa centrado en la región
+            map = L.map('realMap').setView([-30.5, -52], 6);
+
+            // Añadir capa de OpenStreetMap
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Añadir marcadores
+            addCityMarkers();
+            
+            // Crear ruta
+            createRoute();
+            
+            // Ajustar vista para mostrar todos los puntos
+            fitMapToMarkers();
+        }
+
+        // Crear marcadores personalizados
+        function createCustomIcon(city, index) {
+            const isStart = index === 0;
+            const isEnd = index === 0; // Buenos Aires es inicio y fin
+            const isMajor = city.days.includes('10 días') || isStart;
+            
+            const size = isMajor ? 35 : 30;
+            
+            return L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="
+                    background-color: ${city.color}; 
+                    color: white; 
+                    border-radius: 50%; 
+                    width: ${size}px; 
+                    height: ${size}px; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    font-weight: bold; 
+                    border: 3px solid white; 
+                    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+                    font-size: ${isMajor ? '16px' : '14px'};
+                ">${isStart ? '🏁' : index + 1}</div>`,
+                iconSize: [size, size],
+                iconAnchor: [size/2, size/2]
+            });
+        }
+
+        // Añadir marcadores de ciudades
+        function addCityMarkers() {
+            cities.forEach((city, index) => {
+                const icon = createCustomIcon(city, index);
+                
+                const marker = L.marker([city.coordinates[1], city.coordinates[0]], {
+                    icon: icon
+                }).addTo(map);
+
+                // Crear popup
+                const popupContent = `
+                    <div class="popup-content">
+                        <h3 class="popup-title">${city.name}</h3>
+                        <p class="popup-country">${city.country}</p>
+                        <div class="popup-days">${city.days}</div>
+                        <p style="margin: 8px 0; font-size: 14px; line-height: 1.4;">${city.description}</p>
+                        <div style="background: #f8f9fa; padding: 8px; border-radius: 5px; margin-top: 10px;">
+                            <strong style="color: #2c3e50;">✨ Destacados:</strong><br>
+                            <span style="color: #5d6d7e; font-size: 13px;">${city.highlights}</span>
+                        </div>
+                    </div>
+                `;
+                
+                marker.bindPopup(popupContent, {
+                    maxWidth: 300,
+                    className: 'custom-popup'
+                });
+
+                // Efecto hover
+                marker.on('mouseover', function() {
+                    this.openPopup();
+                });
+
+                marker.on('click', function() {
+                    showCityInfo(index);
+                });
+
+                markers.push(marker);
+            });
+        }
+
+        // Crear ruta
+        function createRoute() {
+            // Crear waypoints para la ruta 
+            const waypoints = cities.map(city => 
+                L.latLng(city.coordinates[1], city.coordinates[0])
+            );
+            
+            // Añadir Buenos Aires al final para cerrar el círculo
+            waypoints.push(L.latLng(cities[0].coordinates[1], cities[0].coordinates[0]));
+
+            try {
+                // Crear líneas directas ya que OSRM puede no funcionar bien en esta región
+                const routeCoordinates = waypoints.map(wp => [wp.lat, wp.lng]);
+                
+                const routeLine = L.polyline(routeCoordinates, {
+                    color: '#2c3e50',
+                    weight: 4,
+                    opacity: 0.8,
+                    dashArray: '10, 5'
+                }).addTo(map);
+
+                // Línea de regreso en rojo
+                const returnLine = L.polyline([
+                    [cities[6].coordinates[1], cities[6].coordinates[0]], // La Paloma
+                    [cities[0].coordinates[1], cities[0].coordinates[0]]  // Buenos Aires
+                ], {
+                    color: '#e74c3c',
+                    weight: 6,
+                    opacity: 0.9,
+                    dashArray: '15, 5'
+                }).addTo(map);
+
+                routeLine.bindPopup('Ruta del viaje - 22 días');
+                returnLine.bindPopup('Regreso a Buenos Aires');
+
+            } catch (error) {
+                console.log('Usando rutas directas');
+            }
+        }
+
+        // Ajustar mapa para mostrar todos los marcadores
+        function fitMapToMarkers() {
+            if (markers.length > 0) {
+                const group = new L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1));
+            }
+        }
+
+        // Función para volver a la vista completa
+        function showFullRoute() {
+            fitMapToMarkers();
+        }
+
+        // Función para mostrar información general de la ruta
+        function showRouteOverview() {
+            const infoPanel = document.getElementById('cityInfo');
+            
+            infoPanel.innerHTML = `
+                <div style="text-align: center;">
+                    <h2 style="margin: 0 0 20px 0; color: #2c3e50; font-size: 2.2em;">🌎 Vacaciones Familiares 2026</h2>
+                    <p style="margin: 0 0 20px 0; color: #3498db; font-weight: bold; font-size: 1.3em;">22 días • 7 ciudades • 3 países • ~2,500 km</p>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">
+                    <div style="background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 24px; margin-bottom: 5px;">🏁</div>
+                        <div style="font-weight: bold;">INICIO/FIN</div>
+                        <div>Buenos Aires, Argentina</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #27ae60, #229954); color: white; padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 24px; margin-bottom: 5px;">🏖️</div>
+                        <div style="font-weight: bold;">PLAYA PRINCIPAL</div>
+                        <div>Imbituba, Brasil (10 días)</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #8e44ad, #7d3c98); color: white; padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 24px; margin-bottom: 5px;">🏔️</div>
+                        <div style="font-weight: bold;">AVENTURA</div>
+                        <div>Cambará do Sul, Brasil (3 días)</div>
+                    </div>
+                    <div style="background: linear-gradient(135deg, #16a085, #148f77); color: white; padding: 15px; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 24px; margin-bottom: 5px;">🌊</div>
+                        <div style="font-weight: bold;">RELAX FINAL</div>
+                        <div>La Paloma, Uruguay (3 días)</div>
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #3498db; margin-top: 20px;">
+                    <h4 style="margin: 0 0 10px 0; color: #2c3e50;">🗺️ Vista Completa del Viaje:</h4>
+                    <p style="margin: 0 0 15px 0; color: #5d6d7e; line-height: 1.5;">
+                        El mapa muestra toda la ruta optimizada. Haz <strong>clic en cualquier marcador</strong> para ver detalles específicos de cada destino, o usa los controles de zoom para explorar las diferentes regiones.
+                    </p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
+                        <span style="background: #e74c3c; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px;">🇦🇷 Argentina</span>
+                        <span style="background: #3498db; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px;">🇺🇾 Uruguay</span>
+                        <span style="background: #27ae60; color: white; padding: 5px 10px; border-radius: 15px; font-size: 12px;">🇧🇷 Brasil</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Función para mostrar información de ciudad (reutilizada)
+        function showCityInfo(index) {
+            const city = cities[index];
+            const infoPanel = document.getElementById('cityInfo');
+            
+            infoPanel.innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                    <div style="width: 50px; height: 50px; background: ${city.color}; border-radius: 50%; border: 3px solid white; margin-right: 20px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        ${index === 0 ? '🏁' : index + 1}
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; color: #2c3e50; font-size: 2em;">${city.name}</h2>
+                        <p style="margin: 5px 0 0 0; color: #3498db; font-weight: bold; font-size: 1.2em;">${city.country}</p>
+                    </div>
+                </div>
+                
+                <div style="background: ${city.color}; color: white; padding: 12px 20px; border-radius: 25px; display: inline-block; margin-bottom: 15px; font-size: 1.1em; box-shadow: 0 3px 10px rgba(0,0,0,0.2);">
+                    <strong>⏱️ Duración: ${city.days}</strong>
+                </div>
+                
+                <p style="margin: 15px 0; color: #2c3e50; line-height: 1.7; font-size: 1.1em;">${city.description}</p>
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid ${city.color};">
+                    <h4 style="margin: 0 0 8px 0; color: #2c3e50;">✨ Destacados:</h4>
+                    <p style="margin: 0; color: #5d6d7e; font-size: 1em;">${city.highlights}</p>
+                </div>
+            `;
+            
+            // Efecto visual
+            infoPanel.style.transform = 'scale(0.98)';
+            infoPanel.style.background = 'linear-gradient(135deg, #ecf0f1, #d5dbdb)';
+            setTimeout(() => {
+                infoPanel.style.transform = 'scale(1)';
+            }, 150);
+
+            // Centrar el mapa en la ciudad seleccionada
+            map.setView([city.coordinates[1], city.coordinates[0]], 10);
+            
+            // Abrir popup del marcador
+            if (markers[index]) {
+                markers[index].openPopup();
+            }
+        }
+
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pequeño delay para asegurar que el contenedor esté listo
+            setTimeout(() => {
+                initRealMap();
+                
+                // Mostrar vista completa de la ruta al inicio en lugar de una ciudad específica
+                setTimeout(() => {
+                    showFullRoute();
+                    // Actualizar el panel de información con resumen de la ruta
+                    showRouteOverview();
+                }, 1000);
+            }, 100);
+        });
+
+        // Función para abrir la ruta completa en Google Maps
+        function openInGoogleMaps() {
+            // Detectar si es móvil
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            // Crear la URL de Google Maps con todos los waypoints
+            const waypoints = cities.map(city => 
+                `${city.coordinates[1]},${city.coordinates[0]}`
+            );
+            
+            // Añadir Buenos Aires al final para cerrar el círculo
+            waypoints.push(`${cities[0].coordinates[1]},${cities[0].coordinates[0]}`);
+            
+            if (isMobile) {
+                // Para móviles, intentar abrir la app de Google Maps
+                const appUrl = `googlemaps://maps.google.com/maps/dir/${waypoints.join('/')}`;
+                const webUrl = `https://www.google.com/maps/dir/${waypoints.join('/')}`;
+                
+                // Crear un link invisible y hacer clic
+                const link = document.createElement('a');
+                link.href = appUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Fallback al navegador después de un tiempo si no se abre la app
+                setTimeout(() => {
+                    if (confirm('¿No se abrió la app de Google Maps? ¿Abrir en el navegador?')) {
+                        window.open(webUrl, '_blank');
+                    }
+                }, 2000);
+                
+                showNotification('🚀 Intentando abrir en la app de Google Maps...');
+            } else {
+                // Para escritorio, abrir en nueva pestaña
+                const webUrl = `https://www.google.com/maps/dir/${waypoints.join('/')}`;
+                window.open(webUrl, '_blank');
+                showNotification('🗺️ Abriendo Google Maps en nueva pestaña...');
+            }
+        }
+
+        // Función para abrir ruta por segmentos (más fácil de manejar)
+        function openSegmentedRoute() {
+            const segments = [
+                { from: 0, to: 1, name: "Buenos Aires → Rivera" },
+                { from: 1, to: 2, name: "Rivera → Porto Alegre" },
+                { from: 2, to: 3, name: "Porto Alegre → Imbituba" },
+                { from: 3, to: 4, name: "Imbituba → Cambará do Sul" },
+                { from: 4, to: 5, name: "Cambará do Sul → Pelotas" },
+                { from: 5, to: 6, name: "Pelotas → La Paloma" },
+                { from: 6, to: 0, name: "La Paloma → Buenos Aires" }
+            ];
+
+            let message = "🗂️ Segmentos de la ruta:\n\n";
+            
+            segments.forEach((segment, index) => {
+                const fromCity = cities[segment.from];
+                const toCity = cities[segment.to];
+                const url = `https://www.google.com/maps/dir/${fromCity.coordinates[1]},${fromCity.coordinates[0]}/${toCity.coordinates[1]},${toCity.coordinates[0]}`;
+                
+                message += `${index + 1}. ${segment.name}\n`;
+            });
+
+            message += "\n¿Qué segmento quieres abrir en Google Maps?";
+
+            const choice = prompt(message + "\n\nEscribe el número (1-7):");
+            
+            if (choice && choice >= 1 && choice <= 7) {
+                const segmentIndex = parseInt(choice) - 1;
+                const segment = segments[segmentIndex];
+                const fromCity = cities[segment.from];
+                const toCity = cities[segment.to];
+                const url = `https://www.google.com/maps/dir/${fromCity.coordinates[1]},${fromCity.coordinates[0]}/${toCity.coordinates[1]},${toCity.coordinates[0]}`;
+                
+                window.open(url, '_blank');
+                showNotification(`🗺️ Abriendo: ${segment.name}`);
+            }
+        }
+
+        // Función para copiar coordenadas
+        function copyRouteCoordinates() {
+            let coordinatesText = "📍 COORDENADAS DE LA RUTA\n";
+            coordinatesText += "=" .repeat(40) + "\n\n";
+            
+            cities.forEach((city, index) => {
+                coordinatesText += `${index + 1}. ${city.name} (${city.country})\n`;
+                coordinatesText += `   Lat: ${city.coordinates[1]}, Lng: ${city.coordinates[0]}\n`;
+                coordinatesText += `   Google Maps: https://maps.google.com/?q=${city.coordinates[1]},${city.coordinates[0]}\n\n`;
+            });
+            
+            coordinatesText += "🔄 RUTA COMPLETA EN GOOGLE MAPS:\n";
+            const waypoints = cities.map(city => `${city.coordinates[1]},${city.coordinates[0]}`);
+            waypoints.push(`${cities[0].coordinates[1]},${cities[0].coordinates[0]}`);
+            coordinatesText += `https://www.google.com/maps/dir/${waypoints.join('/')}\n`;
+
+            // Copiar al portapapeles
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(coordinatesText).then(() => {
+                    showNotification('📋 Coordenadas copiadas al portapapeles');
+                }).catch(() => {
+                    // Fallback para navegadores que no soportan clipboard API
+                    showCoordinatesModal(coordinatesText);
+                });
+            } else {
+                showCoordinatesModal(coordinatesText);
+            }
+        }
+
+        // Mostrar modal con coordenadas si no se puede copiar automáticamente
+        function showCoordinatesModal(text) {
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.background = 'rgba(0,0,0,0.8)';
+            modal.style.zIndex = '10000';
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            modal.style.padding = '20px';
+
+            const content = document.createElement('div');
+            content.style.background = 'white';
+            content.style.borderRadius = '15px';
+            content.style.padding = '25px';
+            content.style.maxWidth = '90%';
+            content.style.maxHeight = '80%';
+            content.style.overflow = 'auto';
+            content.style.position = 'relative';
+
+            content.innerHTML = `
+                <h3 style="margin: 0 0 15px 0; color: #2c3e50;">📍 Coordenadas de la Ruta</h3>
+                <textarea style="
+                    width: 100%; 
+                    height: 300px; 
+                    font-family: monospace; 
+                    font-size: 12px; 
+                    border: 1px solid #ddd; 
+                    border-radius: 5px; 
+                    padding: 10px;
+                    resize: vertical;
+                " readonly>${text}</textarea>
+                <div style="margin-top: 15px; text-align: center;">
+                    <button onclick="this.parentElement.parentElement.parentElement.remove()" style="
+                        background: #6c757d; 
+                        color: white; 
+                        border: none; 
+                        padding: 10px 20px; 
+                        border-radius: 25px; 
+                        cursor: pointer;
+                    ">Cerrar</button>
+                </div>
+            `;
+
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+
+            // Cerrar al hacer clic fuera del contenido
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
+        // Función para mostrar notificaciones
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.background = 'linear-gradient(135deg, #4285f4, #34a853)';
+            notification.style.color = 'white';
+            notification.style.padding = '15px 20px';
+            notification.style.borderRadius = '10px';
+            notification.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
+            notification.style.zIndex = '10000';
+            notification.style.fontSize = '14px';
+            notification.style.fontWeight = 'bold';
+            notification.style.transform = 'translateX(100%)';
+            notification.style.transition = 'all 0.3s ease';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animación de entrada
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remover después de 3 segundos
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // Función alternativa para dispositivos móviles (usar app de Google Maps)
+        function openInGoogleMapsApp() {
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                // Crear URL para la app de Google Maps
+                const waypoints = cities.map(city => 
+                    `${city.coordinates[1]},${city.coordinates[0]}`
+                );
+                waypoints.push(`${cities[0].coordinates[1]},${cities[0].coordinates[0]}`);
+                
+                const appUrl = `googlemaps://maps.google.com/maps/dir/${waypoints.join('/')}`;
+                const webUrl = `https://www.google.com/maps/dir/${waypoints.join('/')}`;
+                
+                // Intentar abrir la app, si no funciona, abrir en navegador
+                const link = document.createElement('a');
+                link.href = appUrl;
+                link.click();
+                
+                // Fallback al navegador después de un tiempo
+                setTimeout(() => {
+                    window.open(webUrl, '_blank');
+                }, 1000);
+            } else {
+                openInGoogleMaps();
+            }
+        }
+
+        // Añadir botón para vista completa
+        setTimeout(() => {
+            const mapContainer = document.getElementById('realMap');
+            const fullViewButton = document.createElement('button');
+            fullViewButton.innerHTML = '🗺️ Vista Completa';
+            fullViewButton.style.position = 'absolute';
+            fullViewButton.style.top = '10px';
+            fullViewButton.style.right = '10px';
+            fullViewButton.style.zIndex = '1000';
+            fullViewButton.style.padding = '8px 12px';
+            fullViewButton.style.background = 'white';
+            fullViewButton.style.border = '2px solid #ccc';
+            fullViewButton.style.borderRadius = '5px';
+            fullViewButton.style.cursor = 'pointer';
+            fullViewButton.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            fullViewButton.onclick = showFullRoute;
+            
+            mapContainer.parentElement.appendChild(fullViewButton);
+        }, 2000);
+    </script>
+</body>
+</html>
