@@ -134,6 +134,36 @@
             transform: translateY(0);
         }
         
+        .calendar-button {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px auto;
+            max-width: 300px;
+            text-decoration: none;
+        }
+        
+        .calendar-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+            background: linear-gradient(135deg, #218838, #1e7e34);
+        }
+        
+        .calendar-button:active {
+            transform: translateY(0);
+        }
+        
         .button-container {
             text-align: center;
             padding: 20px;
@@ -417,6 +447,12 @@
                 <span style="font-size: 20px;">🗺️</span>
                 <span>Abrir Ruta Completa en Google Maps</span>
                 <span style="font-size: 14px;">📱</span>
+            </button>
+            
+            <button class="calendar-button" onclick="exportToCalendar()">
+                <span style="font-size: 20px;">📅</span>
+                <span>Agregar Viaje al Calendario</span>
+                <span style="font-size: 14px;">💾</span>
             </button>
             
             <!-- Botones adicionales para diferentes opciones -->
@@ -1126,6 +1162,94 @@
             } else {
                 openInGoogleMaps();
             }
+        }
+
+        // Función para exportar viaje al calendario
+        function exportToCalendar() {
+            // Crear eventos del calendario para cada destino
+            const events = [];
+            
+            // Evento principal del viaje
+            events.push({
+                title: "🌎 Vacaciones Familiares 2025 - Sudamérica",
+                startDate: "2025-01-05",
+                endDate: "2025-01-26",
+                description: "Viaje familiar de 22 días por Argentina, Uruguay y Brasil. Visitando Buenos Aires, Rivera, Porto Alegre, Imbituba, Cambará do Sul, Pelotas y La Paloma.",
+                location: "Argentina, Uruguay, Brasil",
+                isAllDay: true
+            });
+            
+            // Eventos específicos por ciudad
+            const cityEvents = [
+                { city: "Buenos Aires", start: "2025-01-05", end: "2025-01-06", emoji: "🏁" },
+                { city: "Rivera", start: "2025-01-07", end: "2025-01-07", emoji: "🛂" },
+                { city: "Porto Alegre", start: "2025-01-08", end: "2025-01-08", emoji: "🍖" },
+                { city: "Imbituba", start: "2025-01-09", end: "2025-01-18", emoji: "🏖️" },
+                { city: "Cambará do Sul", start: "2025-01-19", end: "2025-01-21", emoji: "🏔️" },
+                { city: "Pelotas", start: "2025-01-22", end: "2025-01-22", emoji: "🍰" },
+                { city: "La Paloma", start: "2025-01-23", end: "2025-01-25", emoji: "🌊" },
+                { city: "Buenos Aires", start: "2025-01-26", end: "2025-01-26", emoji: "🏁" }
+            ];
+            
+            cityEvents.forEach(event => {
+                const cityData = cities.find(c => c.name === event.city);
+                events.push({
+                    title: `${event.emoji} ${event.city} - Vacaciones Familiares`,
+                    startDate: event.start,
+                    endDate: event.end,
+                    description: cityData ? cityData.description : `Visita a ${event.city}`,
+                    location: `${event.city}, ${cityData ? cityData.country : ''}`,
+                    isAllDay: true
+                });
+            });
+            
+            // Generar archivo ICS
+            generateICSFile(events);
+        }
+        
+        // Función para generar archivo ICS
+        function generateICSFile(events) {
+            let icsContent = "BEGIN:VCALENDAR\n";
+            icsContent += "VERSION:2.0\n";
+            icsContent += "PRODID:-//Vacaciones Familiares//Viaje Sudamérica 2025//ES\n";
+            icsContent += "CALSCALE:GREGORIAN\n";
+            
+            events.forEach((event, index) => {
+                const eventStart = event.startDate.replace(/-/g, '');
+                const eventEnd = new Date(event.endDate);
+                eventEnd.setDate(eventEnd.getDate() + 1); // ICS requiere el día siguiente para eventos de día completo
+                const eventEndFormatted = eventEnd.toISOString().substr(0, 10).replace(/-/g, '');
+                
+                icsContent += "BEGIN:VEVENT\n";
+                icsContent += `UID:viaje2025-${index}@vacacionesfamiliares.com\n`;
+                icsContent += `DTSTART;VALUE=DATE:${eventStart}\n`;
+                icsContent += `DTEND;VALUE=DATE:${eventEndFormatted}\n`;
+                icsContent += `SUMMARY:${event.title}\n`;
+                icsContent += `DESCRIPTION:${event.description.replace(/\n/g, '\\n')}\n`;
+                icsContent += `LOCATION:${event.location}\n`;
+                icsContent += `CREATED:${new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}\n`;
+                icsContent += "STATUS:CONFIRMED\n";
+                icsContent += "END:VEVENT\n";
+            });
+            
+            icsContent += "END:VCALENDAR\n";
+            
+            // Crear y descargar el archivo
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Vacaciones_Familiares_2025.ics';
+            
+            // Mostrar notificación
+            showNotification('📅 Archivo de calendario generado. Se descargará automáticamente.');
+            
+            // Trigger download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Cleanup
+            URL.revokeObjectURL(link.href);
         }
 
         // Añadir botón para vista completa
