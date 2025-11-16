@@ -794,13 +794,69 @@
             const waypoints = cities.map(city => 
                 L.latLng(city.coordinates[1], city.coordinates[0])
             );
-            
-            // Añadir Buenos Aires al final para cerrar el círculo
-            waypoints.push(L.latLng(cities[0].coordinates[1], cities[0].coordinates[0]));
 
             try {
-                // Crear líneas directas ya que OSRM puede no funcionar bien en esta región
+                // Usar Leaflet Routing Machine para mostrar rutas reales
+                // Crear segmentos de ruta individuales para mejor control
+                const segments = [
+                    // Buenos Aires → Tacuarembó
+                    [waypoints[0], waypoints[1]],
+                    // Tacuarembó → Porto Alegre
+                    [waypoints[1], waypoints[2]],
+                    // Porto Alegre → Imbituba
+                    [waypoints[2], waypoints[3]],
+                    // Imbituba → Cambará do Sul
+                    [waypoints[3], waypoints[4]],
+                    // Cambará do Sul → Pelotas
+                    [waypoints[4], waypoints[5]],
+                    // Pelotas → Punta Rubia
+                    [waypoints[5], waypoints[6]],
+                    // Punta Rubia → Mercedes
+                    [waypoints[6], waypoints[7]],
+                    // Mercedes → Buenos Aires (regreso)
+                    [waypoints[7], waypoints[0]]
+                ];
+
+                // Crear cada segmento de ruta con Leaflet Routing Machine
+                segments.forEach((segment, index) => {
+                    const isReturn = (index === segments.length - 1);
+                    
+                    const routingControl = L.Routing.control({
+                        waypoints: segment,
+                        routeWhileDragging: false,
+                        addWaypoints: false,
+                        draggableWaypoints: false,
+                        fitSelectedRoutes: false,
+                        showAlternatives: false,
+                        lineOptions: {
+                            styles: [{
+                                color: isReturn ? '#e74c3c' : '#2c3e50',
+                                opacity: 0.8,
+                                weight: isReturn ? 6 : 5
+                            }],
+                            extendToWaypoints: true,
+                            missingRouteTolerance: 0
+                        },
+                        createMarker: function() { return null; }, // No crear marcadores adicionales
+                        show: false, // No mostrar el panel de instrucciones
+                        router: L.Routing.osrmv1({
+                            serviceUrl: 'https://router.project-osrm.org/route/v1'
+                        })
+                    }).addTo(map);
+
+                    // Ocultar el contenedor de instrucciones
+                    const container = routingControl.getContainer();
+                    if (container) {
+                        container.style.display = 'none';
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error al crear rutas con OSRM, usando líneas directas:', error);
+                
+                // Fallback: crear líneas directas si OSRM falla
                 const routeCoordinates = waypoints.map(wp => [wp.lat, wp.lng]);
+                routeCoordinates.push([waypoints[0].lat, waypoints[0].lng]); // Cerrar el círculo
                 
                 const routeLine = L.polyline(routeCoordinates, {
                     color: '#2c3e50',
@@ -809,22 +865,7 @@
                     dashArray: '10, 5'
                 }).addTo(map);
 
-                // Línea de regreso en rojo
-                const returnLine = L.polyline([
-                    [cities[7].coordinates[1], cities[7].coordinates[0]], // Mercedes
-                    [cities[0].coordinates[1], cities[0].coordinates[0]]  // Buenos Aires
-                ], {
-                    color: '#e74c3c',
-                    weight: 6,
-                    opacity: 0.9,
-                    dashArray: '15, 5'
-                }).addTo(map);
-
                 routeLine.bindPopup('Ruta del viaje - 22 días');
-                returnLine.bindPopup('Regreso a Buenos Aires');
-
-            } catch (error) {
-                console.log('Usando rutas directas');
             }
         }
 
