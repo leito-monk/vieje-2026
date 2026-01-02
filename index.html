@@ -7,7 +7,7 @@
     
     <!-- Meta tags para WhatsApp y redes sociales -->
     <meta property="og:title" content="Vacaciones Familiares 2026">
-    <meta property="og:description" content="🌎 Aventura familiar de 22 días por Argentina, Uruguay y Brasil | 5-26 enero 2025 | Playas, cañones, ciudades históricas y mucho más">
+    <meta property="og:description" content="🌎 Aventura familiar de 22 días por Argentina, Uruguay y Brasil | 7-28 enero 2025 | Playas, cañones, ciudades históricas y mucho más">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=630&fit=crop&q=80">
     <meta property="og:image:width" content="1200">
@@ -498,9 +498,11 @@
         <div class="stats">
             <div class="stat-card">
                 <span class="stat-number">22</span>
+                <span class="stat-number">22</span>
                 <div class="stat-label">Días Totales</div>
             </div>
             <div class="stat-card">
+                <span class="stat-number">8</span>
                 <span class="stat-number">8</span>
                 <div class="stat-label">Ciudades</div>
             </div>
@@ -509,12 +511,13 @@
                 <div class="stat-label">Países</div>
             </div>
             <div class="stat-card">
-                <span class="stat-number">~3100</span>
+                <span class="stat-number">~3200</span>
                 <div class="stat-label">Kilómetros</div>
             </div>
         </div>
         
         <div class="itinerary">
+            <h2>📅 Itinerario Detallado - 22 Días</h2>
             <h2>📅 Itinerario Detallado - 22 Días</h2>
             
             <div class="day-item">
@@ -655,7 +658,7 @@
             },
             {
                 name: "Imbituba",
-                days: "10-20 enero | 11 días",
+                days: "10-19 enero | 10 días",
                 country: "🇧🇷 Brasil",
                 description: "Paraíso costero en Santa Catarina con las mejores playas del sur de Brasil. Praia do Rosa es mundialmente famosa, Vila de Pescadores ofrece gastronomía marina auténtica. Temporada de ballenas: julio-noviembre.",
                 highlights: "🏄‍♂️ Surf clase mundial • 🐋 Avistamiento ballenas • 🏖️ Praia do Rosa • 🐟 Villa Pescadores",
@@ -684,8 +687,8 @@
                 name: "La Paloma",
                 days: "24-27 enero | 4 días",
                 country: "🇺🇾 Uruguay",
-                description: "Balneario bohemio del atlántico uruguayo con ambiente relajado. Famoso por sus puestas de sol, Cabo Polonio cercano, gastronomía pesquera y ambiente artístico. Ideal para relajación después del viaje.",
-                highlights: "🌅 Puestas de sol • 🦭 Cabo Polonio • 🎨 Ambiente bohemio • 🐟 Mariscos frescos",
+                description: "Balneario tranquilo en la costa atlántica uruguaya. Conocido por sus playas vírgenes, ambiente familiar y puestas de sol espectaculares. Ideal para desconexión y relax.",
+                highlights: "🌅 Puestas de sol • 🏖️ Playas vírgenes • 🌊 Surf • 🧘 Relax",
                 color: "#16a085",
                 coordinates: [-54.1648, -34.6584]
             },
@@ -896,12 +899,13 @@
                         <div style="font-weight: bold;">INICIO/FIN</div>
                         <div>Buenos Aires</div>
                         <div style="font-size: 12px; opacity: 0.9;">7 ene • 28 ene</div>
+                        <div style="font-size: 12px; opacity: 0.9;">7 ene • 28 ene</div>
                     </div>
                     <div style="background: linear-gradient(135deg, #27ae60, #229954); color: white; padding: 15px; border-radius: 10px; text-align: center;">
                         <div style="font-size: 24px; margin-bottom: 5px;">🏖️</div>
                         <div style="font-weight: bold;">PLAYA PRINCIPAL</div>
                         <div>Imbituba, Brasil</div>
-                        <div style="font-size: 12px; opacity: 0.9;">10-20 enero (11 días)</div>
+                        <div style="font-size: 12px; opacity: 0.9;">10-19 enero (10 días)</div>
                     </div>
                     <div style="background: linear-gradient(135deg, #8e44ad, #7d3c98); color: white; padding: 15px; border-radius: 10px; text-align: center;">
                         <div style="font-size: 24px; margin-bottom: 5px;">🏔️</div>
@@ -1057,9 +1061,9 @@
 
             message += "¿Qué segmento quieres abrir en Google Maps?";
 
-            const choice = prompt(message + "\n\nEscribe el número (1-7):");
+            const choice = prompt(message + "\n\nEscribe el número (1-8):");
             
-            if (choice && choice >= 1 && choice <= 7) {
+            if (choice && choice >= 1 && choice <= 8) {
                 const segmentIndex = parseInt(choice) - 1;
                 const segment = segments[segmentIndex];
                 const fromCity = cities[segment.from];
