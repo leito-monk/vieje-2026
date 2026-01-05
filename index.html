@@ -748,6 +748,7 @@
         // Función para generar datos climáticos realistas basados en patrones históricos de verano
         function generateRealisticWeather(city, dates) {
             // Datos climáticos típicos de enero (verano en el hemisferio sur) por ciudad
+            // Formato: { tempMax: [min, max] en °C, tempMin: [min, max] en °C, precip: [min, max] en mm }
             const climateData = {
                 "Buenos Aires": { tempMax: [30, 32], tempMin: [20, 22], precip: [0, 15], weather: [0, 2] },
                 "Uruguayana": { tempMax: [32, 35], tempMin: [20, 23], precip: [0, 20], weather: [0, 2] },
@@ -771,10 +772,28 @@
                 }
             };
             
+            // Umbrales para códigos de clima WMO
+            const WEATHER_THRESHOLDS = {
+                HEAVY_RAIN: 20,  // mm
+                LIGHT_RAIN: 10,  // mm
+                DRIZZLE: 5,      // mm
+                CLOUDY_CHANCE: 0.7
+            };
+            
+            // Códigos WMO Weather interpretation codes
+            const WMO_CODES = {
+                CLEAR: 0,
+                PARTLY_CLOUDY: 2,
+                OVERCAST: 3,
+                DRIZZLE: 51,
+                RAIN: 61
+            };
+            
             dates.forEach(date => {
                 // Generar variación aleatoria pero consistente basada en la fecha
+                // usando Linear Congruential Generator (LCG)
                 const seed = date.split('-').reduce((a, b) => parseInt(a) + parseInt(b), 0);
-                const random = (seed * 9301 + 49297) % 233280 / 233280; // Generador pseudo-aleatorio simple
+                const random = (seed * 9301 + 49297) % 233280 / 233280;
                 
                 const tempMax = climate.tempMax[0] + (climate.tempMax[1] - climate.tempMax[0]) * random;
                 const tempMin = climate.tempMin[0] + (climate.tempMin[1] - climate.tempMin[0]) * random;
@@ -782,11 +801,17 @@
                 
                 // Seleccionar código de clima basado en precipitación
                 let weatherCode = climate.weather[0];
-                if (precip > 20) weatherCode = 61; // Lluvia
-                else if (precip > 10) weatherCode = 51; // Llovizna
-                else if (precip > 5) weatherCode = 3; // Nublado
-                else if (random > 0.7) weatherCode = 2; // Parcialmente nublado
-                else weatherCode = 0; // Despejado
+                if (precip > WEATHER_THRESHOLDS.HEAVY_RAIN) {
+                    weatherCode = WMO_CODES.RAIN;
+                } else if (precip > WEATHER_THRESHOLDS.LIGHT_RAIN) {
+                    weatherCode = WMO_CODES.DRIZZLE;
+                } else if (precip > WEATHER_THRESHOLDS.DRIZZLE) {
+                    weatherCode = WMO_CODES.OVERCAST;
+                } else if (random > WEATHER_THRESHOLDS.CLOUDY_CHANCE) {
+                    weatherCode = WMO_CODES.PARTLY_CLOUDY;
+                } else {
+                    weatherCode = WMO_CODES.CLEAR;
+                }
                 
                 weatherData.daily.time.push(date);
                 weatherData.daily.temperature_2m_max.push(tempMax);
@@ -827,7 +852,7 @@
                 
                 const url = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
                 
-                const response = await fetch(url, { timeout: 5000 });
+                const response = await fetch(url);
                 const data = await response.json();
                 
                 // Verificar si tenemos datos válidos
