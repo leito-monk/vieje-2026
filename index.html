@@ -790,11 +790,18 @@
                 RAIN: 61
             };
             
+            // Constantes para Linear Congruential Generator (Park-Miller)
+            const LCG_CONSTANTS = {
+                MULTIPLIER: 9301,
+                INCREMENT: 49297,
+                MODULUS: 233280
+            };
+            
             dates.forEach(date => {
                 // Generar variación aleatoria pero consistente basada en la fecha
                 // usando Linear Congruential Generator (LCG) con constantes estándar de Park-Miller
                 const seed = date.split('-').reduce((acc, part) => acc + parseInt(part), 0);
-                const random = (seed * 9301 + 49297) % 233280 / 233280;
+                const random = (seed * LCG_CONSTANTS.MULTIPLIER + LCG_CONSTANTS.INCREMENT) % LCG_CONSTANTS.MODULUS / LCG_CONSTANTS.MODULUS;
                 
                 const tempMax = climate.tempMax[0] + (climate.tempMax[1] - climate.tempMax[0]) * random;
                 const tempMin = climate.tempMin[0] + (climate.tempMin[1] - climate.tempMin[0]) * random;
@@ -864,13 +871,13 @@
                 }
                 
                 // Si la API no devuelve datos (fechas muy futuras), usar datos generados
-                console.log(`Usando datos climáticos realistas para ${city.name} (fechas fuera del rango de pronóstico)`);
+                console.warn(`Usando datos climáticos realistas para ${city.name} (fechas fuera del rango de pronóstico)`);
                 const generatedData = generateRealisticWeather(city, city.visitDates);
                 weatherCache[cacheKey] = generatedData;
                 return generatedData;
                 
             } catch (error) {
-                console.log(`Error al obtener clima de API para ${city.name}, usando datos realistas`, error);
+                console.error(`Error al obtener clima de API para ${city.name}, usando datos realistas`, error);
                 // En caso de error, usar datos generados basados en patrones climáticos
                 const generatedData = generateRealisticWeather(city, city.visitDates);
                 weatherCache[cacheKey] = generatedData;
