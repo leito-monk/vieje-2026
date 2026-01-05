@@ -762,8 +762,17 @@
                 const startDate = city.visitDates[0];
                 const endDate = city.visitDates[city.visitDates.length - 1];
                 
-                // Usar Open-Meteo API (gratuita, sin API key)
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&timezone=auto&start_date=${startDate}&end_date=${endDate}`;
+                // Usar Open-Meteo API (gratuita, sin API key) con URLSearchParams
+                const params = new URLSearchParams({
+                    latitude: lat,
+                    longitude: lon,
+                    daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode',
+                    timezone: 'auto',
+                    start_date: startDate,
+                    end_date: endDate
+                });
+                
+                const url = `https://api.open-meteo.com/v1/forecast?${params.toString()}`;
                 
                 const response = await fetch(url);
                 const data = await response.json();
@@ -910,8 +919,8 @@
 
         // Añadir marcadores de ciudades
         async function addCityMarkers() {
-            for (let index = 0; index < cities.length; index++) {
-                const city = cities[index];
+            // Cargar todos los marcadores primero
+            const markerPromises = cities.map(async (city, index) => {
                 const icon = createCustomIcon(city, index);
                 
                 const marker = L.marker([city.coordinates[1], city.coordinates[0]], {
@@ -941,40 +950,6 @@
                     className: 'custom-popup'
                 });
 
-                // Cargar clima y actualizar popup
-                fetchWeatherForCity(city).then(weatherData => {
-                    if (weatherData && weatherData.daily) {
-                        // Obtener resumen del clima (primer día de visita)
-                        const tempMax = Math.round(weatherData.daily.temperature_2m_max[0]);
-                        const tempMin = Math.round(weatherData.daily.temperature_2m_min[0]);
-                        const weatherCode = weatherData.daily.weathercode[0];
-                        const icon = getWeatherIcon(weatherCode);
-                        const description = getWeatherDescription(weatherCode);
-                        
-                        const weatherSummary = `${icon} ${description} | ${tempMin}°C - ${tempMax}°C`;
-                        
-                        // Actualizar el contenido del popup
-                        popupContent = `
-                            <div class="popup-content">
-                                <h3 class="popup-title">${city.name}</h3>
-                                <p class="popup-country">${city.country}</p>
-                                <div class="popup-days">${city.days}</div>
-                                <p style="margin: 8px 0; font-size: 14px; line-height: 1.4;">${city.description}</p>
-                                <div style="background: #f8f9fa; padding: 8px; border-radius: 5px; margin-top: 10px;">
-                                    <strong style="color: #2c3e50;">✨ Destacados:</strong><br>
-                                    <span style="color: #5d6d7e; font-size: 13px;">${city.highlights}</span>
-                                </div>
-                                <div style="margin-top: 10px; padding: 8px; background: #e8f4f8; border-radius: 5px; font-size: 12px;">
-                                    <strong style="color: #2c3e50;">🌤️ Clima (${city.visitDates[0].split('-')[2]} ene):</strong><br>
-                                    <span style="color: #34495e; font-weight: 500;">${weatherSummary}</span>
-                                </div>
-                            </div>
-                        `;
-                        
-                        marker.setPopupContent(popupContent);
-                    }
-                });
-
                 // Efecto hover
                 marker.on('mouseover', function() {
                     this.openPopup();
@@ -985,7 +960,52 @@
                 });
 
                 markers.push(marker);
-            }
+                return { marker, city, index };
+            });
+
+            // Esperar a que todos los marcadores se carguen
+            const markerData = await Promise.all(markerPromises);
+
+            // Cargar clima en paralelo para todos los marcadores
+            const weatherPromises = markerData.map(async ({ marker, city, index }) => {
+                const weatherData = await fetchWeatherForCity(city);
+                if (weatherData && weatherData.daily) {
+                    // Obtener resumen del clima (primer día de visita)
+                    const tempMax = Math.round(weatherData.daily.temperature_2m_max[0]);
+                    const tempMin = Math.round(weatherData.daily.temperature_2m_min[0]);
+                    const weatherCode = weatherData.daily.weathercode[0];
+                    const icon = getWeatherIcon(weatherCode);
+                    const description = getWeatherDescription(weatherCode);
+                    
+                    const weatherSummary = `${icon} ${description} | ${tempMin}°C - ${tempMax}°C`;
+                    
+                    // Formatear fecha
+                    const dateObj = new Date(city.visitDates[0]);
+                    const dateStr = dateObj.toLocaleDateString('es', { day: 'numeric', month: 'short' });
+                    
+                    // Actualizar el contenido del popup
+                    const popupContent = `
+                        <div class="popup-content">
+                            <h3 class="popup-title">${city.name}</h3>
+                            <p class="popup-country">${city.country}</p>
+                            <div class="popup-days">${city.days}</div>
+                            <p style="margin: 8px 0; font-size: 14px; line-height: 1.4;">${city.description}</p>
+                            <div style="background: #f8f9fa; padding: 8px; border-radius: 5px; margin-top: 10px;">
+                                <strong style="color: #2c3e50;">✨ Destacados:</strong><br>
+                                <span style="color: #5d6d7e; font-size: 13px;">${city.highlights}</span>
+                            </div>
+                            <div style="margin-top: 10px; padding: 8px; background: #e8f4f8; border-radius: 5px; font-size: 12px;">
+                                <strong style="color: #2c3e50;">🌤️ Clima (${dateStr}):</strong><br>
+                                <span style="color: #34495e; font-weight: 500;">${weatherSummary}</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    marker.setPopupContent(popupContent);
+                }
+            });
+
+            await Promise.all(weatherPromises);
         }
 
         // Crear ruta con rutas reales usando OSRM
@@ -1563,24 +1583,24 @@
             button.innerHTML = '⏳ Cargando pronósticos...';
             button.disabled = true;
             
-            // Mapeo de day-item a ciudad
+            // Mapeo de day-item a ciudad con fechas específicas para cada entrada del itinerario
             const dayToCityMap = [
-                { dayItem: 0, cityIndex: 0, dates: ["2026-01-07"] }, // Buenos Aires → Uruguayana
-                { dayItem: 1, cityIndex: 1, dates: ["2026-01-07"] }, // Uruguayana
+                { dayItem: 0, cityIndex: 0, dates: ["2026-01-07"] }, // Buenos Aires (salida)
+                { dayItem: 1, cityIndex: 1, dates: ["2026-01-07"] }, // Uruguayana (llegada)
                 { dayItem: 2, cityIndex: 2, dates: ["2026-01-08", "2026-01-09", "2026-01-10"] }, // Porto Alegre
-                { dayItem: 3, cityIndex: 3, dates: ["2026-01-10"] }, // Porto Alegre → Imbituba
+                { dayItem: 3, cityIndex: 2, dates: ["2026-01-10"] }, // Salida de Porto Alegre
                 { dayItem: 4, cityIndex: 3, dates: cities[3].visitDates }, // Imbituba (11 días)
-                { dayItem: 5, cityIndex: 4, dates: ["2026-01-20"] }, // Imbituba → Cambará
+                { dayItem: 5, cityIndex: 3, dates: ["2026-01-20"] }, // Salida de Imbituba
                 { dayItem: 6, cityIndex: 4, dates: cities[4].visitDates }, // Cambará do Sul
-                { dayItem: 7, cityIndex: 5, dates: ["2026-01-23"] }, // Cambará → Pelotas
-                { dayItem: 8, cityIndex: 6, dates: ["2026-01-24"] }, // Pelotas → La Paloma
+                { dayItem: 7, cityIndex: 4, dates: ["2026-01-23"] }, // Salida de Cambará
+                { dayItem: 8, cityIndex: 5, dates: ["2026-01-23", "2026-01-24"] }, // Pelotas + viaje
                 { dayItem: 9, cityIndex: 6, dates: cities[6].visitDates }, // La Paloma
-                { dayItem: 10, cityIndex: 7, dates: ["2026-01-27"] }, // La Paloma → Mercedes
-                { dayItem: 11, cityIndex: 0, dates: ["2026-01-28"] } // Mercedes → Buenos Aires
+                { dayItem: 10, cityIndex: 7, dates: ["2026-01-27"] }, // Mercedes
+                { dayItem: 11, cityIndex: 7, dates: ["2026-01-28"] } // Regreso a Buenos Aires
             ];
             
-            // Cargar clima para cada sección del itinerario
-            for (const mapping of dayToCityMap) {
+            // Cargar clima para todas las secciones en paralelo
+            const weatherPromises = dayToCityMap.map(async (mapping) => {
                 const city = cities[mapping.cityIndex];
                 const weatherData = await fetchWeatherForCity(city);
                 
@@ -1602,12 +1622,13 @@
                             const description = getWeatherDescription(weatherCode);
                             const precipitation = weatherData.daily.precipitation_sum[dateIndex];
                             
+                            // Formatear la fecha correctamente
                             const dateObj = new Date(date);
-                            const day = dateObj.getDate();
+                            const dateStr = dateObj.toLocaleDateString('es', { day: 'numeric', month: 'short' });
                             
                             weatherHTML += `
                                 <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
-                                    <span>${icon} ${day} ene - ${description}</span>
+                                    <span>${icon} ${dateStr} - ${description}</span>
                                     <span style="font-weight: bold; color: #e74c3c;">${tempMin}°-${tempMax}°C${precipitation > 0 ? ' 💧' + precipitation + 'mm' : ''}</span>
                                 </div>
                             `;
@@ -1619,7 +1640,12 @@
                 } else {
                     weatherInfoDiv.innerHTML = '<div style="margin-top: 8px; color: #95a5a6; font-size: 0.85em;">⚠️ Clima no disponible</div>';
                 }
-            }
+                
+                return mapping;
+            });
+            
+            // Esperar a que todas las peticiones se completen
+            await Promise.all(weatherPromises);
             
             button.innerHTML = '✅ Pronósticos Cargados';
             button.style.background = 'linear-gradient(135deg, #27ae60, #229954)';
