@@ -22,9 +22,19 @@ Mapa interactivo del viaje familiar de 22 días por Argentina, Brasil y Uruguay.
 - Mapa interactivo con **Leaflet.js**
 - Rutas reales por carretera (OSRM)
 - Marcadores con información detallada
+- **🌤️ Pronóstico del tiempo** para cada ciudad y día de visita
 - Exportar a Google Maps
 - Descargar calendario (.ics)
 - Responsive design
+
+## 🌤️ Pronóstico del Tiempo
+
+La aplicación ahora incluye pronósticos meteorológicos para cada destino:
+
+- **En los marcadores del mapa**: Haz clic en cualquier ciudad para ver el clima del primer día de visita
+- **En el itinerario detallado**: Usa el botón "🌤️ Cargar Pronóstico del Tiempo para Todo el Viaje" para ver el clima de todos los días
+- **Información incluida**: Temperatura máxima/mínima, condiciones climáticas (con emojis), y precipitación esperada
+- **API gratuita**: Utiliza Open-Meteo API (sin necesidad de clave)
 
 ## 🚀 Uso
 
@@ -37,3 +47,4 @@ Abrir `index.html` en cualquier navegador web. No requiere instalación.
 - Leaflet.js 1.9.4
 - Leaflet Routing Machine 3.2.12
 - OpenStreetMap
+- Open-Meteo API (pronósticos meteorológicos)
