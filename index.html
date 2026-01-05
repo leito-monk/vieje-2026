@@ -687,7 +687,7 @@
             },
             {
                 name: "Imbituba",
-                days: "10-19 enero | 10 días",
+                days: "10-20 enero | 11 días",
                 country: "🇧🇷 Brasil",
                 description: "Paraíso costero en Santa Catarina con las mejores playas del sur de Brasil. Praia do Rosa es mundialmente famosa, Vila de Pescadores ofrece gastronomía marina auténtica. Temporada de ballenas: julio-noviembre.",
                 highlights: "🏄‍♂️ Surf clase mundial • 🐋 Avistamiento ballenas • 🏖️ Praia do Rosa • 🐟 Villa Pescadores",
@@ -793,7 +793,7 @@
             dates.forEach(date => {
                 // Generar variación aleatoria pero consistente basada en la fecha
                 // usando Linear Congruential Generator (LCG) con constantes estándar de Park-Miller
-                const seed = date.split('-').reduce((a, b) => parseInt(a) + parseInt(b), 0);
+                const seed = date.split('-').reduce((acc, part) => acc + parseInt(part), 0);
                 const random = (seed * 9301 + 49297) % 233280 / 233280;
                 
                 const tempMax = climate.tempMax[0] + (climate.tempMax[1] - climate.tempMax[0]) * random;
