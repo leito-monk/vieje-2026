@@ -517,99 +517,128 @@
         <div class="itinerary">
             <h2>📅 Itinerario Detallado - 22 Días</h2>
             
-            <div class="day-item">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button id="loadWeatherBtn" onclick="loadAllWeather()" style="
+                    background: linear-gradient(135deg, #3498db, #2980b9);
+                    color: white;
+                    padding: 12px 24px;
+                    border: none;
+                    border-radius: 25px;
+                    font-size: 14px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                    🌤️ Cargar Pronóstico del Tiempo para Todo el Viaje
+                </button>
+            </div>
+            
+            <div class="day-item" id="day-item-0">
                 <div class="day-number">1</div>
                 <div class="day-content">
                     <div class="city-name">Buenos Aires → Uruguayana 🇦🇷➡️🇧🇷</div>
                     <div class="duration">📅 7 enero | Salida temprano desde Buenos Aires. Viaje por Ruta 14 hacia la frontera con Brasil (5-6 horas). Cruce fronterizo Paso de los Libres-Uruguayana. Noche en Uruguayana.</div>
+                    <div class="weather-info"></div>
                 </div>
             </div>
             
-            <div class="day-item">
+            <div class="day-item" id="day-item-1">
                 <div class="day-number">2</div>
                 <div class="day-content">
                     <div class="city-name">Uruguayana → Porto Alegre 🇧🇷</div>
                     <div class="duration">📅 8 enero | Viaje por BR-290 hacia Porto Alegre (6-7 horas). Llegada a la capital gaucha.</div>
+                    <div class="weather-info"></div>
                 </div>
             </div>
             
-            <div class="day-item" style="border-left-color: #f39c12;">
+            <div class="day-item" id="day-item-2" style="border-left-color: #f39c12;">
                 <div class="day-number" style="background: linear-gradient(135deg, #f39c12, #e67e22);">3-4</div>
                 <div class="day-content">
                     <div class="city-name">🍖 Porto Alegre - 2 días 🇧🇷</div>
                     <div class="duration">📅 8-10 enero | Explorar la capital gaucha: churrasquerías, Mercado Público, centro histórico, parques, y vida nocturna.</div>
+                    <div class="weather-info"></div>
                 </div>
             </div>
             
-            <div class="day-item">
+            <div class="day-item" id="day-item-3">
                 <div class="day-number">5</div>
                 <div class="day-content">
                     <div class="city-name">Porto Alegre → Imbituba 🇧🇷</div>
                     <div class="duration">📅 10 enero | Viaje por BR-101 hacia la costa catarinense (4-5 horas). Llegada a Imbituba.</div>
+                    <div class="weather-info"></div>
                 </div>
             </div>
             
-            <div class="day-item" style="border-left-color: #27ae60;">
+            <div class="day-item" id="day-item-4" style="border-left-color: #27ae60;">
                 <div class="day-number" style="background: linear-gradient(135deg, #27ae60, #229954);">6-16</div>
                 <div class="day-content">
                     <div class="city-name">🏖️ Imbituba - 11 días 🇧🇷</div>
                     <div class="duration">📅 10-20 enero | Explorar costa catarinense: Praia do Rosa, Praia da Vila, avistamiento de ballenas (temporada), surf, gastronomía marina, Villa de Pescadores.</div>
+                    <div class="weather-info"></div>
                 </div>
             </div>
             
-            <div class="day-item">
+            <div class="day-item" id="day-item-5">
                 <div class="day-number">17</div>
                 <div class="day-content">
                     <div class="city-name">Imbituba → Cambará do Sul 🇧🇷</div>
                     <div class="duration">📅 20 enero | Viaje interior por RS-020 hacia los cañones (3-4 horas). Llegada a Cambará do Sul.</div>
+                    <div class="weather-info"></div>
                 </div>
             </div>
             
-            <div class="day-item" style="border-left-color: #8e44ad;">
+            <div class="day-item" id="day-item-6" style="border-left-color: #8e44ad;">
                 <div class="day-number" style="background: linear-gradient(135deg, #8e44ad, #7d3c98);">17-20</div>
                 <div class="day-content">
                     <div class="city-name">🏔️ Cambará do Sul - 4 días 🇧🇷</div>
                     <div class="duration">📅 20-23 enero | Parques Nacionales Aparados da Serra y Serra Geral. Cañón Itaimbezinho, Cañón Fortaleza, Trilha Rio do Boi, cascadas.</div>
+                    <div class="weather-info"></div>
                 </div>
             </div>
             
-            <div class="day-item">
+            <div class="day-item" id="day-item-7">
                 <div class="day-number">21</div>
                 <div class="day-content">
                     <div class="city-name">Cambará do Sul → Pelotas 🇧🇷</div>
                     <div class="duration">📅 23 enero | Viaje corto por BR-116 (2 horas). Tarde libre en ciudad histórica.</div>
+                    <div class="weather-info"></div>
                 </div>
             </div>
             
-            <div class="day-item">
+            <div class="day-item" id="day-item-8">
                 <div class="day-number">22</div>
                 <div class="day-content">
                     <div class="city-name">Pelotas → La Paloma 🇧🇷➡️🇺🇾</div>
                     <div class="duration">📅 24 enero | Viaje por BR-116 y Ruta 15 uruguaya (4-5 horas). Cruce fronterizo Jaguarão-Río Branco. Llegada a La Paloma.</div>
+                    <div class="weather-info"></div>
                 </div>
             </div>
             
-            <div class="day-item" style="border-left-color: #16a085;">
+            <div class="day-item" id="day-item-9" style="border-left-color: #16a085;">
                 <div class="day-number" style="background: linear-gradient(135deg, #16a085, #148f77);">22-25</div>
                 <div class="day-content">
                     <div class="city-name">🌊 La Paloma - 4 días 🇺🇾</div>
                     <div class="duration">📅 24-27 enero | Balneario atlántico: Playa La Balconada, Cabo Polonio (excursión), puestas de sol, gastronomía costera, ambiente bohemio.</div>
+                    <div class="weather-info"></div>
                 </div>
             </div>
             
-            <div class="day-item">
+            <div class="day-item" id="day-item-10">
                 <div class="day-number">26</div>
                 <div class="day-content">
                     <div class="city-name">La Paloma → Mercedes 🇺🇾</div>
                     <div class="duration">📅 27 enero | Viaje hacia el interior uruguayo por Ruta 9 (3 horas). Noche en Mercedes.</div>
+                    <div class="weather-info"></div>
                 </div>
             </div>
             
-            <div class="day-item">
+            <div class="day-item" id="day-item-11">
                 <div class="day-number" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">27</div>
                 <div class="day-content">
                     <div class="city-name">Mercedes → Buenos Aires 🇺🇾➡️🇦🇷</div>
                     <div class="duration">📅 28 enero | Regreso final por Ruta 2 y Puente Zárate-Brazo Largo (4-5 horas). ¡Fin del viaje!</div>
+                    <div class="weather-info"></div>
                 </div>
             </div>
         </div>
@@ -633,7 +662,8 @@
                 description: "Capital cosmopolita con 3 millones de habitantes. Famosa por el tango, la arquitectura europea, los barrios de San Telmo y La Boca, y la gastronomía mundial. Punto estratégico para iniciar tu aventura sudamericana.",
                 highlights: "🎭 Tango • 🥩 Asado • 🏛️ Arquitectura • 🛍️ Shopping",
                 color: "#e74c3c",
-                coordinates: [-58.3816, -34.6037]
+                coordinates: [-58.3816, -34.6037],
+                visitDates: ["2026-01-07", "2026-01-28"]
             },
             {
                 name: "Uruguayana",
@@ -642,7 +672,8 @@
                 description: "Ciudad fronteriza del estado de Rio Grande do Sul, conectada con Argentina a través del Puente Internacional que une Paso de los Libres con Uruguayana. Importante centro comercial y punto estratégico en la frontera.",
                 highlights: "🌉 Puente internacional • 🛍️ Comercio fronterizo • 🏛️ Centro histórico • 🏞️ Río Uruguay",
                 color: "#3498db",
-                coordinates: [-57.0869, -29.7547]
+                coordinates: [-57.0869, -29.7547],
+                visitDates: ["2026-01-07"]
             },
             {
                 name: "Porto Alegre",
@@ -651,7 +682,8 @@
                 description: "Capital gaucha con 1.5 millones de habitantes. Centro cultural y gastronómico importante, famosa por sus churrasquerías, centros comerciales y vida nocturna. Puerta de entrada al interior de Rio Grande do Sul.",
                 highlights: "🍖 Churrasco • 🏢 Centros comerciales • 🎨 Cultura gaucha",
                 color: "#f39c12",
-                coordinates: [-51.2287, -30.0346]
+                coordinates: [-51.2287, -30.0346],
+                visitDates: ["2026-01-08", "2026-01-09", "2026-01-10"]
             },
             {
                 name: "Imbituba",
@@ -660,7 +692,8 @@
                 description: "Paraíso costero en Santa Catarina con las mejores playas del sur de Brasil. Praia do Rosa es mundialmente famosa, Vila de Pescadores ofrece gastronomía marina auténtica. Temporada de ballenas: julio-noviembre.",
                 highlights: "🏄‍♂️ Surf clase mundial • 🐋 Avistamiento ballenas • 🏖️ Praia do Rosa • 🐟 Villa Pescadores",
                 color: "#27ae60",
-                coordinates: [-48.6701, -28.2401]
+                coordinates: [-48.6701, -28.2401],
+                visitDates: ["2026-01-10", "2026-01-11", "2026-01-12", "2026-01-13", "2026-01-14", "2026-01-15", "2026-01-16", "2026-01-17", "2026-01-18", "2026-01-19", "2026-01-20"]
             },
             {
                 name: "Cambará do Sul",
@@ -669,7 +702,8 @@
                 description: "Puerta de entrada a los cañones más espectaculares de Brasil. Hogar de los Parques Nacionales Aparados da Serra y Serra Geral, con cañones de hasta 900m de profundidad y vistas del Atlántico.",
                 highlights: "🏔️ Cañón Itaimbezinho • 🌊 Cañón Fortaleza • 🥾 Trilhas extremas • 📸 Miradores épicos",
                 color: "#8e44ad",
-                coordinates: [-50.1020, -29.0430]
+                coordinates: [-50.1020, -29.0430],
+                visitDates: ["2026-01-20", "2026-01-21", "2026-01-22", "2026-01-23"]
             },
             {
                 name: "Pelotas",
@@ -678,7 +712,8 @@
                 description: "Ciudad histórica fundada en 1812, famosa por sus dulces tradicionales y arquitectura colonial. Centro cultural importante del sur de Brasil con museos, teatro y gastronomía tradicional gaucha.",
                 highlights: "🍰 Dulces tradicionales • 🏛️ Arquitectura colonial • 🎭 Teatro • 📚 Museos",
                 color: "#e67e22",
-                coordinates: [-52.3426, -31.7654]
+                coordinates: [-52.3426, -31.7654],
+                visitDates: ["2026-01-23", "2026-01-24"]
             },
             {
                 name: "La Paloma",
@@ -687,7 +722,8 @@
                 description: "Balneario tranquilo en la costa atlántica uruguaya. Conocido por sus playas vírgenes, ambiente familiar y puestas de sol espectaculares. Ideal para desconexión y relax.",
                 highlights: "🌅 Puestas de sol • 🏖️ Playas vírgenes • 🌊 Surf • 🧘 Relax",
                 color: "#16a085",
-                coordinates: [-54.1648, -34.6584]
+                coordinates: [-54.1648, -34.6584],
+                visitDates: ["2026-01-24", "2026-01-25", "2026-01-26", "2026-01-27"]
             },
             {
                 name: "Mercedes",
@@ -696,14 +732,131 @@
                 description: "Ciudad histórica del interior de Uruguay, capital del departamento de Soriano. Conocida por su arquitectura colonial, plazas arboladas, y rica tradición cultural. Punto estratégico en el camino de regreso a Buenos Aires.",
                 highlights: "🏛️ Plaza Independencia • ⛪ Catedral • 🌳 Parques • 🏭 Cultura gaucha",
                 color: "#9b59b6",
-                coordinates: [-58.0333, -33.2528]
+                coordinates: [-58.0333, -33.2528],
+                visitDates: ["2026-01-27", "2026-01-28"]
             }
         ];
+
+        // Cache para datos del clima
+        let weatherCache = {};
 
         // Variables globales
         let map;
         let markers = [];
         let routingControl;
+
+        // Función para obtener el clima de una ciudad usando Open-Meteo API
+        async function fetchWeatherForCity(city) {
+            const cacheKey = `${city.name}_${city.visitDates.join('_')}`;
+            
+            // Verificar si ya tenemos el clima en cache
+            if (weatherCache[cacheKey]) {
+                return weatherCache[cacheKey];
+            }
+
+            try {
+                const lat = city.coordinates[1];
+                const lon = city.coordinates[0];
+                
+                // Obtener el rango de fechas
+                const startDate = city.visitDates[0];
+                const endDate = city.visitDates[city.visitDates.length - 1];
+                
+                // Usar Open-Meteo API (gratuita, sin API key)
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,weathercode&timezone=auto&start_date=${startDate}&end_date=${endDate}`;
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                // Guardar en cache
+                weatherCache[cacheKey] = data;
+                
+                return data;
+            } catch (error) {
+                console.error(`Error fetching weather for ${city.name}:`, error);
+                return null;
+            }
+        }
+
+        // Función para obtener el icono del clima basado en el código WMO
+        function getWeatherIcon(weatherCode) {
+            // Códigos WMO Weather interpretation
+            if (weatherCode === 0) return '☀️';
+            if (weatherCode <= 3) return '⛅';
+            if (weatherCode <= 48) return '🌫️';
+            if (weatherCode <= 67) return '🌧️';
+            if (weatherCode <= 77) return '🌨️';
+            if (weatherCode <= 82) return '🌦️';
+            if (weatherCode <= 86) return '❄️';
+            if (weatherCode <= 99) return '⛈️';
+            return '🌤️';
+        }
+
+        // Función para obtener la descripción del clima
+        function getWeatherDescription(weatherCode) {
+            if (weatherCode === 0) return 'Despejado';
+            if (weatherCode <= 3) return 'Parcialmente nublado';
+            if (weatherCode <= 48) return 'Niebla';
+            if (weatherCode <= 67) return 'Lluvia';
+            if (weatherCode <= 77) return 'Nieve';
+            if (weatherCode <= 82) return 'Chubascos';
+            if (weatherCode <= 86) return 'Nieve intensa';
+            if (weatherCode <= 99) return 'Tormenta';
+            return 'Variado';
+        }
+
+        // Función para formatear la información del clima
+        function formatWeatherInfo(weatherData, dates) {
+            if (!weatherData || !weatherData.daily) {
+                return '<p style="color: #95a5a6; font-size: 0.9em;">⚠️ Clima no disponible</p>';
+            }
+
+            let weatherHTML = '<div style="margin-top: 15px;">';
+            
+            dates.forEach((date, index) => {
+                if (index < weatherData.daily.time.length) {
+                    const tempMax = weatherData.daily.temperature_2m_max[index];
+                    const tempMin = weatherData.daily.temperature_2m_min[index];
+                    const precipitation = weatherData.daily.precipitation_sum[index];
+                    const weatherCode = weatherData.daily.weathercode[index];
+                    const icon = getWeatherIcon(weatherCode);
+                    const description = getWeatherDescription(weatherCode);
+                    
+                    // Formatear la fecha para mostrar
+                    const dateObj = new Date(date);
+                    const dateStr = dateObj.toLocaleDateString('es', { day: 'numeric', month: 'short' });
+                    
+                    weatherHTML += `
+                        <div style="
+                            background: rgba(255,255,255,0.9);
+                            padding: 10px;
+                            border-radius: 8px;
+                            margin: 5px 0;
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                        ">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 24px;">${icon}</span>
+                                <div>
+                                    <div style="font-weight: bold; color: #2c3e50;">${dateStr}</div>
+                                    <div style="font-size: 0.85em; color: #7f8c8d;">${description}</div>
+                                </div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-weight: bold; color: #e74c3c;">↑ ${Math.round(tempMax)}°C</div>
+                                <div style="font-size: 0.9em; color: #3498db;">↓ ${Math.round(tempMin)}°C</div>
+                                ${precipitation > 0 ? `<div style="font-size: 0.85em; color: #3498db;">💧 ${precipitation}mm</div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            weatherHTML += '</div>';
+            return weatherHTML;
+        }
 
         // Inicializar mapa
         function initRealMap() {
@@ -756,16 +909,17 @@
         }
 
         // Añadir marcadores de ciudades
-        function addCityMarkers() {
-            cities.forEach((city, index) => {
+        async function addCityMarkers() {
+            for (let index = 0; index < cities.length; index++) {
+                const city = cities[index];
                 const icon = createCustomIcon(city, index);
                 
                 const marker = L.marker([city.coordinates[1], city.coordinates[0]], {
                     icon: icon
                 }).addTo(map);
 
-                // Crear popup
-                const popupContent = `
+                // Crear popup con placeholder inicial
+                let popupContent = `
                     <div class="popup-content">
                         <h3 class="popup-title">${city.name}</h3>
                         <p class="popup-country">${city.country}</p>
@@ -775,12 +929,50 @@
                             <strong style="color: #2c3e50;">✨ Destacados:</strong><br>
                             <span style="color: #5d6d7e; font-size: 13px;">${city.highlights}</span>
                         </div>
+                        <div style="margin-top: 10px; padding: 8px; background: #e8f4f8; border-radius: 5px; font-size: 12px;">
+                            <strong style="color: #2c3e50;">🌤️ Clima:</strong><br>
+                            <span style="color: #7f8c8d;">Cargando pronóstico...</span>
+                        </div>
                     </div>
                 `;
                 
                 marker.bindPopup(popupContent, {
                     maxWidth: 300,
                     className: 'custom-popup'
+                });
+
+                // Cargar clima y actualizar popup
+                fetchWeatherForCity(city).then(weatherData => {
+                    if (weatherData && weatherData.daily) {
+                        // Obtener resumen del clima (primer día de visita)
+                        const tempMax = Math.round(weatherData.daily.temperature_2m_max[0]);
+                        const tempMin = Math.round(weatherData.daily.temperature_2m_min[0]);
+                        const weatherCode = weatherData.daily.weathercode[0];
+                        const icon = getWeatherIcon(weatherCode);
+                        const description = getWeatherDescription(weatherCode);
+                        
+                        const weatherSummary = `${icon} ${description} | ${tempMin}°C - ${tempMax}°C`;
+                        
+                        // Actualizar el contenido del popup
+                        popupContent = `
+                            <div class="popup-content">
+                                <h3 class="popup-title">${city.name}</h3>
+                                <p class="popup-country">${city.country}</p>
+                                <div class="popup-days">${city.days}</div>
+                                <p style="margin: 8px 0; font-size: 14px; line-height: 1.4;">${city.description}</p>
+                                <div style="background: #f8f9fa; padding: 8px; border-radius: 5px; margin-top: 10px;">
+                                    <strong style="color: #2c3e50;">✨ Destacados:</strong><br>
+                                    <span style="color: #5d6d7e; font-size: 13px;">${city.highlights}</span>
+                                </div>
+                                <div style="margin-top: 10px; padding: 8px; background: #e8f4f8; border-radius: 5px; font-size: 12px;">
+                                    <strong style="color: #2c3e50;">🌤️ Clima (${city.visitDates[0].split('-')[2]} ene):</strong><br>
+                                    <span style="color: #34495e; font-weight: 500;">${weatherSummary}</span>
+                                </div>
+                            </div>
+                        `;
+                        
+                        marker.setPopupContent(popupContent);
+                    }
                 });
 
                 // Efecto hover
@@ -793,7 +985,7 @@
                 });
 
                 markers.push(marker);
-            });
+            }
         }
 
         // Crear ruta con rutas reales usando OSRM
@@ -933,10 +1125,11 @@
         }
 
         // Función para mostrar información de ciudad (reutilizada)
-        function showCityInfo(index) {
+        async function showCityInfo(index) {
             const city = cities[index];
             const infoPanel = document.getElementById('cityInfo');
             
+            // Mostrar información básica primero
             infoPanel.innerHTML = `
                 <div style="display: flex; align-items: center; margin-bottom: 20px;">
                     <div style="width: 50px; height: 50px; background: ${city.color}; border-radius: 50%; border: 3px solid white; margin-right: 20px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
@@ -958,6 +1151,11 @@
                     <h4 style="margin: 0 0 8px 0; color: #2c3e50;">✨ Destacados:</h4>
                     <p style="margin: 0; color: #5d6d7e; font-size: 1em;">${city.highlights}</p>
                 </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #ecf0f1, #bdc3c7); border-radius: 10px;">
+                    <h4 style="margin: 0 0 10px 0; color: #2c3e50;">🌤️ Pronóstico del Tiempo</h4>
+                    <p style="margin: 0; color: #7f8c8d; font-size: 0.9em;">Cargando información meteorológica...</p>
+                </div>
             `;
             
             // Efecto visual
@@ -974,6 +1172,39 @@
             if (markers[index]) {
                 markers[index].openPopup();
             }
+
+            // Obtener y mostrar el clima
+            const weatherData = await fetchWeatherForCity(city);
+            const weatherHTML = formatWeatherInfo(weatherData, city.visitDates);
+            
+            // Actualizar el panel con el clima
+            infoPanel.innerHTML = `
+                <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                    <div style="width: 50px; height: 50px; background: ${city.color}; border-radius: 50%; border: 3px solid white; margin-right: 20px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        ${index === 0 ? '🏁' : index + 1}
+                    </div>
+                    <div>
+                        <h2 style="margin: 0; color: #2c3e50; font-size: 2em;">${city.name}</h2>
+                        <p style="margin: 5px 0 0 0; color: #3498db; font-weight: bold; font-size: 1.2em;">${city.country}</p>
+                    </div>
+                </div>
+                
+                <div style="background: ${city.color}; color: white; padding: 12px 20px; border-radius: 25px; display: inline-block; margin-bottom: 15px; font-size: 1.1em; box-shadow: 0 3px 10px rgba(0,0,0,0.2);">
+                    <strong>⏱️ Duración: ${city.days}</strong>
+                </div>
+                
+                <p style="margin: 15px 0; color: #2c3e50; line-height: 1.7; font-size: 1.1em;">${city.description}</p>
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid ${city.color};">
+                    <h4 style="margin: 0 0 8px 0; color: #2c3e50;">✨ Destacados:</h4>
+                    <p style="margin: 0; color: #5d6d7e; font-size: 1em;">${city.highlights}</p>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #ecf0f1, #bdc3c7); border-radius: 10px;">
+                    <h4 style="margin: 0 0 10px 0; color: #2c3e50;">🌤️ Pronóstico del Tiempo</h4>
+                    ${weatherHTML}
+                </div>
+            `;
         }
 
         // Inicializar cuando se carga la página
@@ -1324,6 +1555,76 @@
             
             // Cleanup
             URL.revokeObjectURL(link.href);
+        }
+
+        // Función para cargar el clima de todos los destinos
+        async function loadAllWeather() {
+            const button = document.getElementById('loadWeatherBtn');
+            button.innerHTML = '⏳ Cargando pronósticos...';
+            button.disabled = true;
+            
+            // Mapeo de day-item a ciudad
+            const dayToCityMap = [
+                { dayItem: 0, cityIndex: 0, dates: ["2026-01-07"] }, // Buenos Aires → Uruguayana
+                { dayItem: 1, cityIndex: 1, dates: ["2026-01-07"] }, // Uruguayana
+                { dayItem: 2, cityIndex: 2, dates: ["2026-01-08", "2026-01-09", "2026-01-10"] }, // Porto Alegre
+                { dayItem: 3, cityIndex: 3, dates: ["2026-01-10"] }, // Porto Alegre → Imbituba
+                { dayItem: 4, cityIndex: 3, dates: cities[3].visitDates }, // Imbituba (11 días)
+                { dayItem: 5, cityIndex: 4, dates: ["2026-01-20"] }, // Imbituba → Cambará
+                { dayItem: 6, cityIndex: 4, dates: cities[4].visitDates }, // Cambará do Sul
+                { dayItem: 7, cityIndex: 5, dates: ["2026-01-23"] }, // Cambará → Pelotas
+                { dayItem: 8, cityIndex: 6, dates: ["2026-01-24"] }, // Pelotas → La Paloma
+                { dayItem: 9, cityIndex: 6, dates: cities[6].visitDates }, // La Paloma
+                { dayItem: 10, cityIndex: 7, dates: ["2026-01-27"] }, // La Paloma → Mercedes
+                { dayItem: 11, cityIndex: 0, dates: ["2026-01-28"] } // Mercedes → Buenos Aires
+            ];
+            
+            // Cargar clima para cada sección del itinerario
+            for (const mapping of dayToCityMap) {
+                const city = cities[mapping.cityIndex];
+                const weatherData = await fetchWeatherForCity(city);
+                
+                const dayItemElement = document.getElementById(`day-item-${mapping.dayItem}`);
+                const weatherInfoDiv = dayItemElement.querySelector('.weather-info');
+                
+                if (weatherData && weatherData.daily) {
+                    // Obtener datos solo para las fechas relevantes de este día
+                    let weatherHTML = '<div style="margin-top: 12px; padding: 10px; background: rgba(236,240,241,0.5); border-radius: 8px; font-size: 0.9em;">';
+                    weatherHTML += '<strong style="color: #2c3e50;">🌤️ Clima:</strong>';
+                    
+                    mapping.dates.forEach(date => {
+                        const dateIndex = weatherData.daily.time.indexOf(date);
+                        if (dateIndex !== -1) {
+                            const tempMax = Math.round(weatherData.daily.temperature_2m_max[dateIndex]);
+                            const tempMin = Math.round(weatherData.daily.temperature_2m_min[dateIndex]);
+                            const weatherCode = weatherData.daily.weathercode[dateIndex];
+                            const icon = getWeatherIcon(weatherCode);
+                            const description = getWeatherDescription(weatherCode);
+                            const precipitation = weatherData.daily.precipitation_sum[dateIndex];
+                            
+                            const dateObj = new Date(date);
+                            const day = dateObj.getDate();
+                            
+                            weatherHTML += `
+                                <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                    <span>${icon} ${day} ene - ${description}</span>
+                                    <span style="font-weight: bold; color: #e74c3c;">${tempMin}°-${tempMax}°C${precipitation > 0 ? ' 💧' + precipitation + 'mm' : ''}</span>
+                                </div>
+                            `;
+                        }
+                    });
+                    
+                    weatherHTML += '</div>';
+                    weatherInfoDiv.innerHTML = weatherHTML;
+                } else {
+                    weatherInfoDiv.innerHTML = '<div style="margin-top: 8px; color: #95a5a6; font-size: 0.85em;">⚠️ Clima no disponible</div>';
+                }
+            }
+            
+            button.innerHTML = '✅ Pronósticos Cargados';
+            button.style.background = 'linear-gradient(135deg, #27ae60, #229954)';
+            
+            showNotification('🌤️ Pronósticos del tiempo cargados para todo el itinerario');
         }
 
         // Añadir botón para vista completa
