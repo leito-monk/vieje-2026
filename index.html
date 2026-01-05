@@ -746,18 +746,19 @@
         let routingControl;
 
         // Función para generar datos climáticos realistas basados en patrones históricos de verano
+        // Nota: Enero es VERANO en el hemisferio sur (Argentina, Brasil, Uruguay)
         function generateRealisticWeather(city, dates) {
             // Datos climáticos típicos de enero (verano en el hemisferio sur) por ciudad
             // Formato: { tempMax: [min, max] en °C, tempMin: [min, max] en °C, precip: [min, max] en mm }
             const climateData = {
-                "Buenos Aires": { tempMax: [30, 32], tempMin: [20, 22], precip: [0, 15], weather: [0, 2] },
-                "Uruguayana": { tempMax: [32, 35], tempMin: [20, 23], precip: [0, 20], weather: [0, 2] },
-                "Porto Alegre": { tempMax: [30, 32], tempMin: [20, 22], precip: [0, 25], weather: [1, 3] },
-                "Imbituba": { tempMax: [26, 29], tempMin: [20, 22], precip: [5, 30], weather: [1, 61] },
-                "Cambará do Sul": { tempMax: [24, 27], tempMin: [15, 18], precip: [10, 40], weather: [2, 61] },
-                "Pelotas": { tempMax: [28, 31], tempMin: [18, 21], precip: [5, 25], weather: [1, 3] },
-                "La Paloma": { tempMax: [26, 29], tempMin: [18, 21], precip: [5, 20], weather: [0, 3] },
-                "Mercedes": { tempMax: [30, 33], tempMin: [18, 21], precip: [5, 25], weather: [1, 3] }
+                "Buenos Aires": { tempMax: [30, 32], tempMin: [20, 22], precip: [0, 15] },
+                "Uruguayana": { tempMax: [32, 35], tempMin: [20, 23], precip: [0, 20] },
+                "Porto Alegre": { tempMax: [30, 32], tempMin: [20, 22], precip: [0, 25] },
+                "Imbituba": { tempMax: [26, 29], tempMin: [20, 22], precip: [5, 30] },
+                "Cambará do Sul": { tempMax: [24, 27], tempMin: [15, 18], precip: [10, 40] },
+                "Pelotas": { tempMax: [28, 31], tempMin: [18, 21], precip: [5, 25] },
+                "La Paloma": { tempMax: [26, 29], tempMin: [18, 21], precip: [5, 20] },
+                "Mercedes": { tempMax: [30, 33], tempMin: [18, 21], precip: [5, 25] }
             };
             
             const climate = climateData[city.name] || climateData["Buenos Aires"];
@@ -791,7 +792,7 @@
             
             dates.forEach(date => {
                 // Generar variación aleatoria pero consistente basada en la fecha
-                // usando Linear Congruential Generator (LCG)
+                // usando Linear Congruential Generator (LCG) con constantes estándar de Park-Miller
                 const seed = date.split('-').reduce((a, b) => parseInt(a) + parseInt(b), 0);
                 const random = (seed * 9301 + 49297) % 233280 / 233280;
                 
@@ -799,8 +800,8 @@
                 const tempMin = climate.tempMin[0] + (climate.tempMin[1] - climate.tempMin[0]) * random;
                 const precip = climate.precip[0] + (climate.precip[1] - climate.precip[0]) * random;
                 
-                // Seleccionar código de clima basado en precipitación
-                let weatherCode = climate.weather[0];
+                // Seleccionar código de clima WMO basado en precipitación
+                let weatherCode;
                 if (precip > WEATHER_THRESHOLDS.HEAVY_RAIN) {
                     weatherCode = WMO_CODES.RAIN;
                 } else if (precip > WEATHER_THRESHOLDS.LIGHT_RAIN) {
@@ -1330,9 +1331,10 @@
                     showRouteOverview();
                     
                     // Cargar automáticamente el pronóstico del tiempo para todo el viaje
+                    // El delay de 2000ms permite que el mapa y los marcadores se carguen completamente primero
                     setTimeout(() => {
                         loadAllWeather();
-                    }, 2000); // Dar tiempo para que el mapa se cargue primero
+                    }, 2000);
                 }, 1000);
             }, 100);
         });
