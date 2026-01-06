@@ -929,8 +929,9 @@
                     const icon = getWeatherIcon(weatherCode);
                     const description = getWeatherDescription(weatherCode);
                     
-                    // Formatear la fecha para mostrar
-                    const dateObj = new Date(date);
+                    // Formatear la fecha para mostrar (evitar problemas de timezone)
+                    const [year, month, day] = date.split('-');
+                    const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
                     const dateStr = dateObj.toLocaleDateString('es', { day: 'numeric', month: 'short' });
                     
                     weatherHTML += `
@@ -954,7 +955,7 @@
                             <div style="text-align: right;">
                                 <div style="font-weight: bold; color: #e74c3c;">↑ ${Math.round(tempMax)}°C</div>
                                 <div style="font-size: 0.9em; color: #3498db;">↓ ${Math.round(tempMin)}°C</div>
-                                ${precipitation > 0 ? `<div style="font-size: 0.85em; color: #3498db;">💧 ${precipitation}mm</div>` : ''}
+                                ${precipitation > 0 ? `<div style="font-size: 0.85em; color: #3498db;">💧 ${Math.round(precipitation)}mm</div>` : ''}
                             </div>
                         </div>
                     `;
@@ -1077,8 +1078,9 @@
                     
                     const weatherSummary = `${icon} ${description} | ${tempMin}°C - ${tempMax}°C`;
                     
-                    // Formatear fecha
-                    const dateObj = new Date(city.visitDates[0]);
+                    // Formatear fecha (evitar problemas de timezone)
+                    const [year, month, day] = city.visitDates[0].split('-');
+                    const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
                     const dateStr = dateObj.toLocaleDateString('es', { day: 'numeric', month: 'short' });
                     
                     // Actualizar el contenido del popup
@@ -1726,14 +1728,15 @@
                             const description = getWeatherDescription(weatherCode);
                             const precipitation = weatherData.daily.precipitation_sum[dateIndex];
                             
-                            // Formatear la fecha correctamente
-                            const dateObj = new Date(date);
+                            // Formatear la fecha correctamente (evitar problemas de timezone)
+                            const [year, month, day] = date.split('-');
+                            const dateObj = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
                             const dateStr = dateObj.toLocaleDateString('es', { day: 'numeric', month: 'short' });
                             
                             weatherHTML += `
                                 <div style="margin-top: 6px; display: flex; justify-content: space-between; align-items: center;">
                                     <span>${icon} ${dateStr} - ${description}</span>
-                                    <span style="font-weight: bold; color: #e74c3c;">${tempMin}°-${tempMax}°C${precipitation > 0 ? ' 💧' + precipitation + 'mm' : ''}</span>
+                                    <span style="font-weight: bold; color: #e74c3c;">${tempMin}°-${tempMax}°C${precipitation > 0 ? ' 💧' + Math.round(precipitation) + 'mm' : ''}</span>
                                 </div>
                             `;
                         }
